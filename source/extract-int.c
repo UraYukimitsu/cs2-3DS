@@ -102,8 +102,10 @@ void unobfuscate_filename(char *obfuscated, unsigned long seed)
 void file_list(char* archive_name, char* game_id)
 {
 	int file_handle, do_decrypt = 0;
-	unsigned long i, index_seed, file_key = 0;
+	unsigned long i, index_seed, len, file_key = 0;
+	unsigned char *buff = NULL;
 	ArchiveHeader hdr;
+	Blowfish *bf = NULL;
 	Entry* entries = NULL;
 	printf("Listing files contained in %s using the id %s...\n", archive_name, game_id);
 	fflush(stdout);
@@ -123,15 +125,78 @@ void file_list(char* archive_name, char* game_id)
 	
 	for(i = 0; i < hdr.entries; i++)
 	{
-		printf("%s\n", entries[i].filename);
-		/*if(!strcmp(entries[i].filename, "__key__.dat"))
+		//printf("%s\n", entries[i].filename);
+		if(!strcmp(entries[i].filename, "__key__.dat"))
 		{
 			mt_sgenrand(entries[i].file_sz);
 			file_key = mt_genrand();
-			do_decrypt++;
+			do_decrypt = 1;
 			break;
-		}*/
+		}
 	}
 	
-	//if(!do_decrypt)
+	if(!do_decrypt)
+	{
+		printf("%s: no key information found, assuming not encrypted.\n", archive_name);
+		fflush(stdout);
+	} else
+		bf_initialize(bf, (unsigned char*) &file_key, 4);
+	
+	for(i = 0; i < hdr.entries; i++)
+	{
+		if(!strcmp(entries[i].filename, "__key__.dat"))
+			continue;
+		
+		if(do_decrypt)
+		{
+			unobfuscate_filename(entries[i].filename, index_seed + i);
+			entries[i].offset += i;
+			printf("%s\n", entries[i].filename);
+			bf_decrypt(bf, (unsigned char*) &entries[i].offset, 8);
+		}
+		
+		len = entries[i].file_sz;
+		buff = malloc(len * sizeof(unsigned char));
+		
+		lseek(file_handle, entries[i].offset, SEEK_SET);
+		
+		read(file_handle, buff, len);
+		
+		if(do_decrypt)
+			bf_decrypt(bf, buff, (len / 8) * 8);
+		
+		free(buff);
+	}
+	
+	free(entries);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

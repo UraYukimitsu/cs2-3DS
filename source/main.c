@@ -11,10 +11,10 @@ int main(int argc, char **argv)
 	consoleInit(GFX_TOP, NULL);
 	printf("\x1b[0;0H");
 	printf("Hello, world!\n");
-	//file_list("update01.int", "FW-6JD55162");
 	
 	start = time(NULL);
 	printf("Conversion started on %d.\n", start);
+	file_list("bgm.int", "FW-6JD55162");
 	open_cst("ama_002.cst", "ama_002.txt");
 	end = time(NULL);
 	printf("Conversion finished on %d in %d seconds.\n", end, end - start);
