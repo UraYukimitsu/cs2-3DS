@@ -1,0 +1,98 @@
+//#include "blowfish.h"
+#define __NDS__
+#include <sys/select.h>
+#include <3ds/services/csnd.h>
+#include <3ds.h>
+#include <time.h>
+#include <SDL/SDL.h>
+#include "extract-int.h"
+#include "extract-cst.h"
+
+/*void wtfCompatibility()
+{
+	CSND_initialize(NULL); //Args do not really matter, just here for the sake of LINKING
+	CSND_shutdown();
+	select(0, NULL, NULL, NULL, NULL);
+}*/
+
+int main(int argc, char **argv)
+{
+	//time_t start, end;
+	SDL_Surface *screen = NULL;
+	//gfxInitDefault();
+	//consoleInit(GFX_TOP, NULL);
+	//printf("\x1b[0;0H");
+	//printf("Hello, world!\n");
+	
+
+
+	SDL_Init(SDL_INIT_VIDEO);
+
+	screen = SDL_SetVideoMode(240, 400, 32, SDL_SWSURFACE);
+
+	SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 255, 0, 0));
+
+	SDL_Flip(screen);
+	while(!(hidKeysDown() & KEY_START)) hidScanInput();
+	SDL_Quit();
+	/*start = time(NULL);
+	printf("Conversion started on %d.\n", (int)start);
+	file_list("bgm.int", "FW-6JD55162");
+	open_cst("ama_002.cst", "ama_002.txt");
+	end = time(NULL);
+	printf("Conversion finished on %d in %d seconds.\n", (int)end, (int)(end - start));
+	while (aptMainLoop())
+	{
+		hidScanInput();
+		if (hidKeysDown() & KEY_START) break;
+		
+		gfxFlushBuffers();
+		gfxSwapBuffers();
+		
+		gspWaitForVBlank();
+	}
+	
+	gfxExit();*/
+	return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

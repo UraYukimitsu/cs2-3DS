@@ -7,10 +7,10 @@
 void Blowfish_encipher(Blowfish *bf, DWORD *xl, DWORD *xr)
 {
 	aword Xl, Xr;
-	
+
 	Xl.dword = *xl;
 	Xr.dword = *xr;
-	
+
 	Xl.dword ^= bf->PArray[0];
 	ROUND (Xr, Xl, 1) ;  ROUND (Xl, Xr, 2) ;
 	ROUND (Xr, Xl, 3) ;  ROUND (Xl, Xr, 4) ;
@@ -21,18 +21,18 @@ void Blowfish_encipher(Blowfish *bf, DWORD *xl, DWORD *xr)
 	ROUND (Xr, Xl, 13) ; ROUND (Xl, Xr, 14) ;
 	ROUND (Xr, Xl, 15) ; ROUND (Xl, Xr, 16) ;
 	Xr.dword ^= bf->PArray[17];
-	
-	(*xr) = Xl.dword;
-	(*xl) = Xr.dword;
+
+	*xr = Xl.dword;
+	*xl = Xr.dword;
 }
 
 void Blowfish_decipher(Blowfish *bf, DWORD *xl, DWORD *xr)
 {
 	aword Xl, Xr;
-	
+
 	Xl.dword = *xl;
 	Xr.dword = *xr;
-	
+
 	Xl.dword ^= bf->PArray[17];
 	ROUND (Xr, Xl, 16) ;  ROUND (Xl, Xr, 15) ;
 	ROUND (Xr, Xl, 14) ;  ROUND (Xl, Xr, 13) ;
@@ -43,9 +43,9 @@ void Blowfish_decipher(Blowfish *bf, DWORD *xl, DWORD *xr)
 	ROUND (Xr, Xl, 4) ;   ROUND (Xl, Xr, 3) ;
 	ROUND (Xr, Xl, 2) ;   ROUND (Xl, Xr, 1) ;
 	Xr.dword ^= bf->PArray[0];
-	
-	(*xr) = Xl.dword;
-	(*xl) = Xr.dword;
+
+	*xl = Xr.dword;
+    *xr = Xl.dword;
 }
 
 void bf_initialize(Blowfish *bf, BYTE key[], int keybytes)
@@ -53,14 +53,14 @@ void bf_initialize(Blowfish *bf, BYTE key[], int keybytes)
 	int i, j;
 	DWORD data, datal, datar;
 	aword temp;
-	
+
 	for(i = 0; i < 18; i++)
 		bf->PArray[i] = bf_P[i];
-		
+
 	for(i = 0; i < 4; i++)
 		for(j = 0; j < 256; j++)
 			bf->SBoxes[i][j] = bf_S[i][j];
-			
+
 	j = 0;
 	for(i = 0; i < NPASS + 2; ++i)
 	{
@@ -73,26 +73,24 @@ void bf_initialize(Blowfish *bf, BYTE key[], int keybytes)
 		bf->PArray[i] ^= data;
 		j = (j + 4) % keybytes;
 	}
-	
+
 	datal = 0;
 	datar = 0;
-	
+
 	for(i = 0; i < NPASS + 2; i += 2)
 	{
 		Blowfish_encipher(bf, &datal, &datar);
 		bf->PArray[i] = datal;
 		bf->PArray[i + 1] = datar;
 	}
-	
+
 	for(i = 0; i < 4; ++i)
-	{
 		for(j = 0; j < 256; j += 2)
 		{
 			Blowfish_encipher(bf,&datal, &datar);
 			bf->SBoxes[i][j] = datal;
 			bf->SBoxes[i][j + 1] = datar;
 		}
-	}
 }
 
 DWORD bf_encode(Blowfish *bf, BYTE *pInput, BYTE *pOutput, DWORD lSize)
@@ -101,9 +99,9 @@ DWORD bf_encode(Blowfish *bf, BYTE *pInput, BYTE *pOutput, DWORD lSize)
 	BYTE *pi, *po;
 	int i, j;
 	int SameDest = (pInput == pOutput ? 1: 0);
-	
+
 	lOutSize = bf_getOutputLength(lSize);
-	
+
 	for(lCount = 0; lCount < lOutSize; lCount += 8)
 	{
 		if(SameDest) //If data is being written in the input buffer
@@ -116,7 +114,7 @@ DWORD bf_encode(Blowfish *bf, BYTE *pInput, BYTE *pOutput, DWORD lSize)
 				j = (int) (lOutSize - lSize); //Number of null bytes to add
 				for(i = 0; i < j; i++)
 					*po++ = 0;
-					
+
 				Blowfish_encipher(bf, (DWORD *) pInput, (DWORD *) (pInput + 4));
 			}
 			pInput += 8;
@@ -135,7 +133,7 @@ DWORD bf_encode(Blowfish *bf, BYTE *pInput, BYTE *pOutput, DWORD lSize)
 			{
 				lGoodBytes = lSize - lCount;
 				po = pOutput;
-				
+
 				for(i = 0; i < (int) lGoodBytes; i++)
 					*po++ = *pInput++;
 				for(j = i; j < 8; i++)
@@ -155,7 +153,7 @@ void bf_decode(Blowfish *bf, BYTE *pInput, BYTE *pOutput, DWORD lSize)
 	BYTE *pi, *po;
 	int i;
 	int SameDest = (pInput == pOutput ? 1 : 0);
-	
+
 	for(lCount = 0; lCount < lSize; lCount += 8)
 	{
 		if (SameDest)	//If encoded data is being written into the input buffer
@@ -192,7 +190,7 @@ DWORD bf_encrypt(Blowfish *bf, BYTE *pInput, DWORD lSize)
 void bf_decrypt(Blowfish *bf, BYTE *pInput, DWORD lSize)
 {
 	BYTE *pOutput = NULL;
-	
+
 	if(lSize != bf_getOutputLength(lSize))
 		printf("Input length != Output length\n");
 	pOutput = malloc(lSize * sizeof(BYTE));

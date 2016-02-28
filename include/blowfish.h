@@ -11,11 +11,11 @@
 	#define DWORD  		unsigned long
 	#define WORD  		unsigned short
 	#define BYTE  		unsigned char
-	
+
 	#define bf_getOutputLength(x) (x % 8 ? ((x + 8) - (x % 8)) : x)
 	#define Set_Key(x, y, z) bf_initialize(x, y, z)
 
-	typedef struct Blowfish 
+	typedef struct Blowfish
 	{
 		DWORD PArray[18];
 		DWORD SBoxes[4][256];
@@ -309,3 +309,4 @@
 	  0xb74e6132, 0xce77e25b, 0x578fdfe3, 0x3ac372e6,
 	};
 #endif //BLOWFISH_H
+

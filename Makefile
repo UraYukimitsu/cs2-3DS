@@ -1,3 +1,6 @@
+#export DEVKITPRO=~/devkitPro
+#export DEVKITARM=${DEVKITPRO}/devkitARM
+
 #---------------------------------------------------------------------------------
 .SUFFIXES:
 #---------------------------------------------------------------------------------
@@ -33,7 +36,7 @@ DATA		:=	data
 INCLUDES	:=	include
 
 APP_TITLE		:= cs2 3DS
-APP_DESCRIPTION	:= Play cs2-based VNs on your 3DS!
+APP_DESCRIPTION	        := Play cs2-based VNs on your 3DS!
 APP_AUTHOR		:= UraKn0x
 
 #---------------------------------------------------------------------------------
@@ -52,13 +55,13 @@ CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++11
 ASFLAGS	:=	-g $(ARCH)
 LDFLAGS	=	-specs=3dsx.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
 
-LIBS	:= -lsf2d -lctru -lm -lz
+LIBS	:= -lsf2d -lm -lz -lSDL -lctru
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
 # include and lib
 #---------------------------------------------------------------------------------
-LIBDIRS	:= $(CTRULIB) $(CURDIR)/../libsf2d ${DEVKITPRO}/portlibs/armv6k
+LIBDIRS	:= $(CTRULIB) $(CURDIR)/../libsf2d ${DEVKITPRO}/portlibs/armv6k ${DEVKITPRO}/SDL
 
 
 #---------------------------------------------------------------------------------
@@ -127,8 +130,9 @@ endif
 all: $(BUILD)
 
 $(BUILD):
-	@[ -d $@ ] || mkdir -p $@
-	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
+	@echo $(LIBPATHS)
+	[ -d $@ ] || mkdir -p $@
+	$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
 
 #---------------------------------------------------------------------------------
 clean:
