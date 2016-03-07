@@ -15,10 +15,7 @@ texTable *addTex(texTable *next, char *name, ulong texIndex, ulong width, ulong 
 		return NULL;
 	}
 	if(next)
-	{
-		rwdTex(next);
 		next->prev = ret;
-	}
 	ret->prev     = NULL;
 	ret->next     = next;
 	ret->width    = width;
@@ -92,12 +89,23 @@ texTable *texSeek(texTable *tbl, long offset, int whence)
 texTable *texSearch(texTable *tbl, char *name, ulong texIndex)
 {
 	rwdTex(tbl);
-	while(tbl->next)
-	{
+	do {
 		if(!strcmp(tbl->texName, name) && tbl->texIndex == texIndex)
 			return tbl;
-		tbl = tbl->next;
-	}
+	} while(tbl = tbl->next);
 	return NULL; //If we didn't find anything, return NULL
+}
+
+void freeTexTable(texTable *tbl)
+{
+	texTable *next;
+	while(tbl)
+	{
+		next = tbl->next;
+		free(tbl->RGBABuff);
+		free(tbl->texName);
+		free(tbl);
+		tbl = next;
+	}
 }
 

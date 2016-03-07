@@ -1,5 +1,5 @@
-#ifndef _CS2_H
-#define _CS2_H
+#ifndef CS2_H_
+#define CS2_H_
 
 typedef unsigned char uchar;
 typedef unsigned long ulong;
@@ -10,4 +10,5 @@ typedef unsigned long ulong;
 #include <string.h>
 #include <zlib.h>
 
-#endif //_CS2_H
+#endif //CS2_H_
+

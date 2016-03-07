@@ -78,7 +78,7 @@ void unobfuscateFilename(char *obfuscated, unsigned long seed)
 	}
 }
 
-void printListInt(char* archiveName, char* gameID)
+void listInt(char* archiveName, char* gameID)
 {
 	int fd, doDecrypt = 0, fdOut;
 	unsigned long i, indexSeed, len, fileKey = 0, j;
@@ -93,7 +93,7 @@ void printListInt(char* archiveName, char* gameID)
 	fd = open(archiveName, O_RDONLY | O_BINARY);
 	if(!fd)
 	{
-		fprintf(stderr, "Could not open %s.\n", archive_name);
+		fprintf(stderr, "Could not open %s.\n", archiveName);
 		exit(1);
 	}
 
@@ -173,5 +173,32 @@ void printListInt(char* archiveName, char* gameID)
 	free(entries);
 }
 
-//fileTable *listDecryptedInt(
+fileList *listDecryptedInt(char *filename)
+{
+	fileList *ret = NULL;
+	ArchiveHeader hdr;
+	Entry entry;
+	ulong i;
+	int fd;
+
+	fd = open(filename, O_RDONLY | O_BINARY);
+	read(fd, &hdr, sizeof(hdr));
+	if(strcmp(hdr.magic, "KIF"))
+	{
+		printf("Incorrect INT archive. Expected magic 'KIF', was %s\n.", hdr.magic);
+		return NULL;
+	}
+	for(i = 0; i < hdr.entries; i++)
+	{
+		read(fd, &entry, sizeof(entry));
+		if(!strcmp(entry.filename, "__key__.dat"))
+		{
+			printf("Encrypted INT archive. Aborting...\n");
+			freeFileList(ret); //In case there were files before the key entry
+			return NULL;
+		}
+		ret = addFile(ret, entry.filename, filename, entry.offset, entry.fileSize);
+	}
+	return ret;
+}
 

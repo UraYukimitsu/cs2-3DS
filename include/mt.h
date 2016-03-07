@@ -1,3 +1,6 @@
+#ifndef MT_H_
+#define MT_H_
+
 #include<stdio.h>
 
 /* Period parameters */
@@ -72,3 +75,6 @@ static unsigned long mt_genrand(void)
 //long rand(void)    { return mt_genrand(); }
 //long lrand48(void) { return mt_genrand(); }
 //long random(void)  { return mt_genrand(); }
+
+#endif //MT_H
+

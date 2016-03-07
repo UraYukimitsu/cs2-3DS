@@ -2,7 +2,6 @@
 #define _HGX_H
 
 #include "cs2.h"
-#include "bitBuffer.h"
 #include "texTable.h"
 
 typedef struct _HGxHeader {

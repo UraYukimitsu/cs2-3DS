@@ -1,5 +1,5 @@
-#ifndef _TEXTABLE_H
-#define _TEXTABLE_H
+#ifndef TEXTABLE_H_
+#define TEXTABLE_H_
 
 #include "cs2.h"
 
@@ -18,9 +18,10 @@ texTable *addTex(texTable *next, char *name, ulong texIndex, ulong width, ulong 
 texTable *catTex(texTable *prev, texTable *next);
 texTable *texSeek(texTable *tbl, long offset, int whence);
 texTable *texSearch(texTable *tbl, char *name, ulong texIndex);
+void freeTexTable(texTable *tbl);
 
 #define rwdTex(t) while(t->prev) t = t->prev;
 #define fwdTex(t) while(t->next) t = t->next;
 
-#endif
+#endif //TEXTABLE_H_
 

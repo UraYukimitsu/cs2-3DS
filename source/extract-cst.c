@@ -22,9 +22,9 @@ char *dumpString(unsigned char *src, unsigned int offset)
 {
 	int i;
 	unsigned int len = 0;
-	unsigned char *ret = NULL;
+	char *ret = NULL;
 
-	for(len = 0; src[i + offset]; len++) continue;
+	for(len = 0; src[len + offset]; len++) continue;
 	ret = malloc(len + 1);
 
 	for(i = 0; src[i + offset]; i++)
@@ -82,9 +82,9 @@ void openCst(char *filename, char *output) //CST files are strings with an offse
 		return;
 	}
 
-	memcpy(&tempStorage, (decompBuff + 8), 4);
+	memcpy(&tempStorage, (decompressedBuff + 8), 4);
 	indexOffset = 0x10 + tempStorage;
-	memcpy(&tempStorage, (decomp_buff + 12), 4);
+	memcpy(&tempStorage, (decompressedBuff + 12), 4);
 	baseOffset = 0x10 + tempStorage;
 
 	offsetList = makeOffsetList(decompressedBuff, indexOffset, baseOffset);
@@ -93,7 +93,7 @@ void openCst(char *filename, char *output) //CST files are strings with an offse
 
 	close(fd);
 	fd = open(output, O_WRONLY | O_TRUNC | O_CREAT);
-	for(i = 0; string_list; i++)
+	for(i = 0; stringList; i++)
 		write(fd, stringList[i], strlen(stringList[i]));
 	close(fd);
 
@@ -119,8 +119,8 @@ void openFes(char *filename, char *output) //FES files are just plain compressed
 	}
 
 	read(fd, &compressedLen, 4);
-	read(fD, &decompressedLen, 4);
-	read(file_handle, &tempStorage, 4); //4 unknown bytes
+	read(fd, &decompressedLen, 4);
+	read(fd, &tempStorage, 4); //4 unknown bytes
 	compressedBuff = malloc(compressedLen);
 	decompressedBuff = malloc(decompressedLen);
 	read(fd, compressedBuff, compressedLen);
@@ -140,11 +140,10 @@ void openFes(char *filename, char *output) //FES files are just plain compressed
 
 	i = 0;
    	fd = open(output, O_WRONLY | O_TRUNC | O_CREAT);
-	for(i = 0; decomp_buff[i]; i++)
-		write(file_handle, &decomp_buff[i], 1);
+	write(fd, decompressedBuff, decompressedLen);
 	close(fd);
 
-	free(comp_buff);
-	free(decomp_buff);
+	free(compressedBuff);
+	free(decompressedBuff);
 }
 

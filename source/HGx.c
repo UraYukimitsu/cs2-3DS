@@ -1,4 +1,5 @@
 #include "HGx.h"
+#include "bitBuffer.h"
 
 #define smalloc(ptr, size) 	ptr = malloc(size);\
 				if(!ptr) exit(1);

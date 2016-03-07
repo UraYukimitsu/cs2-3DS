@@ -1,8 +1,9 @@
-#ifndef EXTRACT_INT_H
-#define EXTRACT_INT_H
+#ifndef EXTRACT_INT_H_
+#define EXTRACT_INT_H_
 
 #include "mt.h"
 #include "blowfish.h"
+#include "fileList.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <fcntl.h>
@@ -25,7 +26,8 @@ typedef struct _Entry {
 
 unsigned long generateIndexSeed(const char* gameID);
 void unobfuscateFilename(char *obfuscated, unsigned long seed);
-void fileList(char* archiveName, char* gameID);
+void listInt(char* archiveName, char* gameID);
+fileList *listDecryptedInt(char *filename);
 
-#endif //EXTRACT_INT_H
+#endif //EXTRACT_INT_H_
 
