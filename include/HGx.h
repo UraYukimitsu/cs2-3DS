@@ -38,8 +38,10 @@ typedef struct _HG3ImgHeader {
 } HG3ImgHeader;
 
 texTable *openHGx(const char *filename);
+texTable *readHGx(int fd, const char *filename);
 texTable *readHG3Image(int fd, HG3StdInfo stdInfo, HG3ImgHeader imgHdr, char *outName, ulong texIndex, texTable *next);
 uchar *unRLE(uchar *buff, ulong buffLen, uchar *cmdBuff, ulong cmdLen, ulong *outLen);
 void unDelta(uchar *buff, ulong buffLen, ulong width, ulong height, ulong Bpp, uchar *RGBABuff);
 
 #endif //_HGX_H
+
