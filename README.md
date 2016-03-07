@@ -8,9 +8,11 @@ What I have done:
 -  [x] Read script from user interface FES files
 -  [x] Extract INT archives
 -  [x] Read HG3 images
+-  [x] Read from (decrypted) INT archives without extracting
     
 
 To-do list:
 -  [ ] Write an interpreter for the scripts (any help with that would be gladly taken)
 -  [ ] Audio capabilities (should not be really hard to implement)
+-  [ ] Full support for encrypted INT archives
     
