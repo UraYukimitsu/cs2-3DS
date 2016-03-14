@@ -8,3 +8,4 @@
 *.3dsx
 *.elf
 *.smdh
+build/*
