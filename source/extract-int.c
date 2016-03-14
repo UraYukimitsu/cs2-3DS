@@ -1,5 +1,35 @@
 #include "extract-int.h"
 
+fileList *listDecryptedInt(char *filename)
+{
+	fileList *ret = NULL;
+	ArchiveHeader hdr;
+	Entry entry;
+	ulong i;
+	int fd;
+
+	fd = open(filename, O_RDONLY | O_BINARY);
+	read(fd, &hdr, sizeof(hdr));
+	if(strcmp(hdr.magic, "KIF"))
+	{
+		printf("Incorrect INT archive. Expected magic 'KIF', was %s\n.", hdr.magic);
+		return NULL;
+	}
+	for(i = 0; i < hdr.entries; i++)
+	{
+		read(fd, &entry, sizeof(entry));
+		if(!strcmp(entry.filename, "__key__.dat"))
+		{
+			printf("Encrypted INT archive. Aborting...\n");
+			freeFileList(ret); //In case there were files before the key entry
+			return NULL;
+		}
+		ret = addFile(ret, entry.filename, filename, entry.offset, entry.fileSize);
+	}
+	return ret;
+}
+
+/*
 unsigned long generateIndexSeed(const char* gameID)
 {
 	unsigned long ret = -1, i;
@@ -142,7 +172,7 @@ void listInt(char* archiveName, char* gameID)
 		}
 
 		len = entries[i].fileSize;
-		printf("Allocating %u (%08x) bytes.\n", len, len);
+
 		buff = malloc(len * sizeof(unsigned char));
 
 		if(buff == NULL)
@@ -172,33 +202,5 @@ void listInt(char* archiveName, char* gameID)
 
 	free(entries);
 }
-
-fileList *listDecryptedInt(char *filename)
-{
-	fileList *ret = NULL;
-	ArchiveHeader hdr;
-	Entry entry;
-	ulong i;
-	int fd;
-
-	fd = open(filename, O_RDONLY | O_BINARY);
-	read(fd, &hdr, sizeof(hdr));
-	if(strcmp(hdr.magic, "KIF"))
-	{
-		printf("Incorrect INT archive. Expected magic 'KIF', was %s\n.", hdr.magic);
-		return NULL;
-	}
-	for(i = 0; i < hdr.entries; i++)
-	{
-		read(fd, &entry, sizeof(entry));
-		if(!strcmp(entry.filename, "__key__.dat"))
-		{
-			printf("Encrypted INT archive. Aborting...\n");
-			freeFileList(ret); //In case there were files before the key entry
-			return NULL;
-		}
-		ret = addFile(ret, entry.filename, filename, entry.offset, entry.fileSize);
-	}
-	return ret;
-}
+*/
 

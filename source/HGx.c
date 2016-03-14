@@ -26,8 +26,6 @@ texTable *readHGx(int fd, const char *filename)
 	texTable     *ret = NULL;
 	char         *texName = strdup(filename);
 	
-	printf("Entered function openHGx.\n");
-
 	read(fd, &fileHdr, sizeof(fileHdr));
 	if(!memcmp(fileHdr.magic, "HG-3", 4)) //Seems like a correct HG3 file for now
 	{
@@ -43,11 +41,11 @@ texTable *readHGx(int fd, const char *filename)
 				return NULL;
 			}
 			read(fd, &stdInfo, sizeof(stdInfo));
-			printf("OffNext: %08x.\n", tag.offsetNextTag);
+			printf("OffNext: %08lx.\n", tag.offsetNextTag);
 			while(tag.offsetNextTag)
 			{
 				read(fd, &tag, sizeof(tag));
-				printf("OffNext: %08x.\n", tag.offsetNextTag);
+				printf("OffNext: %08lx.\n", tag.offsetNextTag);
 				if(!memcmp(tag.name, "img0000", 7))
 				{
 					read(fd, &imgHdr, sizeof(imgHdr));
@@ -58,7 +56,7 @@ texTable *readHGx(int fd, const char *filename)
 					//Save unknown data to file
 				}
 				lseek(fd, 12, SEEK_CUR);
-				printf("Next image: %d.\n", imgIndex);
+				printf("Next image: %lu.\n", imgIndex);
 			}
 		}
 	} else {
@@ -67,7 +65,6 @@ texTable *readHGx(int fd, const char *filename)
 	}
 	free(texName);
 	
-	printf("Exited function openHGx returning %08x.", (ulong)ret);	
 	return ret;
 }
 
@@ -78,8 +75,6 @@ texTable *readHG3Image(int fd, HG3StdInfo stdInfo, HG3ImgHeader imgHdr, char *te
 	int      err;
 	texTable *ret = NULL;
 	
-	printf("Entered function readHG3Image.\n");
-
 	smalloc(tempBuff, imgHdr.compressedLen);
 	smalloc(buff, imgHdr.originalLen);
 	read(fd, tempBuff, imgHdr.compressedLen);
@@ -115,7 +110,6 @@ texTable *readHG3Image(int fd, HG3StdInfo stdInfo, HG3ImgHeader imgHdr, char *te
 	ret = addTex(next, texName, texIndex, stdInfo.width, stdInfo.height, stdInfo.bpp / 8, RGBABuff);
 	free(RGBABuff);
 
-	printf("Exited function readHG3Image returning %08x.\n", (ulong)ret);
 	return ret;
 }
 
@@ -126,8 +120,6 @@ uchar *unRLE(uchar *buff, ulong buffLen, uchar *cmdBuff, ulong cmdLen, ulong *ou
 	ulong n = 0, i = 0;
 	uchar *outBuff = NULL;
 	
-	printf("Entered function unRLE.\n");
-
 	bitBuff  = bitBuffer_new(cmdBuff, cmdLen);
 	copyFlag = getBit(bitBuff);
 
@@ -145,8 +137,6 @@ uchar *unRLE(uchar *buff, ulong buffLen, uchar *cmdBuff, ulong cmdLen, ulong *ou
 		copyFlag = !copyFlag;
 	}
 	free(bitBuff);
-
-	printf("Exited function unRLE returning %08x.\n", (ulong)outBuff);
 
 	return outBuff;
 }
@@ -172,8 +162,6 @@ void unDelta(uchar *buff, ulong buffLen, ulong width, ulong height, ulong Bpp, u
 	uchar *line   = NULL;
 	uchar *prev   = NULL;
 
-	printf("Entered function unDelta.\n");
-
 	while(outPtr < outEnd)
 	{
 		val = table1[*sect1++] | table2[*sect2++] | table3[*sect3++] | table4[*sect4++];
@@ -191,8 +179,6 @@ void unDelta(uchar *buff, ulong buffLen, ulong width, ulong height, ulong Bpp, u
 		for(x = 0; x < lineLen; x++)
 			line[x] += prev[x];
 	}
-
-	printf("Exited function unDelta.\n");
 }
 
 #undef smalloc

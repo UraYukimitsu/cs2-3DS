@@ -6,8 +6,6 @@ texTable *addTex(texTable *next, char *name, ulong texIndex, ulong width, ulong 
 	ulong i;
 	uchar temp;
 
-	printf("Entered function addTex.\n");
-
 	ret = malloc(sizeof(texTable));
 	if(!ret)
 	{
@@ -36,9 +34,6 @@ texTable *addTex(texTable *next, char *name, ulong texIndex, ulong width, ulong 
 		ret->RGBABuff[4*i] = ret->RGBABuff[4*i + 2];
 		ret->RGBABuff[4*i + 2] = temp;
 	}
-
-
-	printf("Exited function addTex returning %08x.\n", (ulong)ret);
 
 	return ret;
 }
@@ -92,7 +87,7 @@ texTable *texSearch(texTable *tbl, char *name, ulong texIndex)
 	do {
 		if(!strcmp(tbl->texName, name) && tbl->texIndex == texIndex)
 			return tbl;
-	} while(tbl = tbl->next);
+	} while((tbl = tbl->next));
 	return NULL; //If we didn't find anything, return NULL
 }
 

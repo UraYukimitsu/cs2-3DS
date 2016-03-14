@@ -9,9 +9,9 @@
 #include <zlib.h>
 #include "basicIO.h"
 	
-unsigned int* makeOffsetList(unsigned char *src, unsigned int indexOff, unsigned int baseOff);
-char *dumpString(unsigned char *src, unsigned int offset);
-char **makeStringList(unsigned char *src, unsigned int *offsets);
+unsigned long *makeOffsetList(unsigned char *src, unsigned long indexOff, unsigned long baseOff);
+char *dumpString(unsigned char *src, unsigned long offset);
+char **makeStringList(unsigned char *src, unsigned long *offsets);
 void openCst(char *filename, char *output);
 void openFes(char *filename, char *output);
 

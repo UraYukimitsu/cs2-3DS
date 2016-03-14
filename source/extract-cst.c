@@ -1,12 +1,12 @@
 #include "extract-cst.h"
 
-unsigned int* makeOffsetList(unsigned char *src, unsigned int indexOff, unsigned int baseOff)
+unsigned long *makeOffsetList(unsigned char *src, unsigned long indexOff, unsigned long baseOff)
 {
-	unsigned int count, i, ptr, *ret;
+	unsigned long count, i, ptr, *ret;
 
 	ptr = indexOff;
 	count = (baseOff - indexOff) / 4;
-	ret = malloc((count + 1) * sizeof(unsigned int));
+	ret = malloc((count + 1) * sizeof(unsigned long));
  	for(i = 0; i < count; i++)
 	{
 		memcpy(ret + i, (src + ptr), 4);
@@ -18,10 +18,10 @@ unsigned int* makeOffsetList(unsigned char *src, unsigned int indexOff, unsigned
 	return ret;
 }
 
-char *dumpString(unsigned char *src, unsigned int offset)
+char *dumpString(unsigned char *src, unsigned long offset)
 {
 	int i;
-	unsigned int len = 0;
+	unsigned long len = 0;
 	char *ret = NULL;
 
 	for(len = 0; src[len + offset]; len++) continue;
@@ -35,7 +35,7 @@ char *dumpString(unsigned char *src, unsigned int offset)
 	return ret;
 }
 
-char **makeStringList(unsigned char *src, unsigned int *offsets)
+char **makeStringList(unsigned char *src, unsigned long *offsets)
 {
 	unsigned int i;
 	char **ret;
@@ -49,8 +49,9 @@ char **makeStringList(unsigned char *src, unsigned int *offsets)
 
 void openCst(char *filename, char *output) //CST files are strings with an offset index compressed using zlib.
 {
-	int fd, indexOffset, baseOffset;
-	unsigned int compressedLen, decompressedLen, *offsetList = NULL, i, j, tempStorage;
+	int fd;
+	unsigned long compressedLen, decompressedLen, *offsetList = NULL, j, tempStorage, indexOffset, baseOffset;
+	unsigned int i;
 	char magic[9], **stringList = NULL;
 	unsigned char *compressedBuff = NULL, *decompressedBuff = NULL;
 
@@ -78,7 +79,7 @@ void openCst(char *filename, char *output) //CST files are strings with an offse
 	}
 	if(decompressedLen != j)
 	{
-		printf("Error: decompression error.\nExpected decompressed size: %d\nActual decompressed size: %d\n", j, decompressedLen);
+		printf("Error: decompression error.\nExpected decompressed size: %lu\nActual decompressed size: %lu\n", j, decompressedLen);
 		return;
 	}
 
@@ -106,7 +107,8 @@ void openCst(char *filename, char *output) //CST files are strings with an offse
 void openFes(char *filename, char *output) //FES files are just plain compressed text with a small header.
 {
 	int fd;
-	unsigned int compressedLen, decompressedLen, i, j, tempStorage;
+	unsigned long compressedLen, decompressedLen, j, tempStorage;
+	unsigned int i;
 	char magic[4];
 	unsigned char *compressedBuff, *decompressedBuff;
 
@@ -133,13 +135,12 @@ void openFes(char *filename, char *output) //FES files are just plain compressed
 	}
 	if(decompressedLen != j)
 	{
-		printf("Error: decompression error.\nExpected decompressed size: %d\nActual decompressed size: %d\n", j, decompressedLen);
+		printf("Error: decompression error.\nExpected decompressed size: %lu\nActual decompressed size: %lu\n", j, decompressedLen);
 		return;
 	}	
 	close(fd);
 
-	i = 0;
-   	fd = open(output, O_WRONLY | O_TRUNC | O_CREAT);
+	fd = open(output, O_WRONLY | O_TRUNC | O_CREAT);
 	write(fd, decompressedBuff, decompressedLen);
 	close(fd);
 

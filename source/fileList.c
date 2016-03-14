@@ -33,7 +33,7 @@ fileList *findFile(fileList *list, char *fileName)
 int getFD(fileList *list, char *fileName)
 {
 	int ret;
-	if(list = findFile(list, fileName))
+	if((list = findFile(list, fileName)))
 	{
 		ret = open(list->intArchive, O_RDONLY | O_BINARY);
 		lseek(ret, list->intOffset, SEEK_SET);
